@@ -1,0 +1,78 @@
+Bean Validations
+
+
+				Controller
+import jakarta.validation.*;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Component
+public class RequestValidator<T> {
+    private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private final Validator validator = validatorFactory.getValidator();
+
+    public Set<String> validate(T object) {
+        Set<ConstraintViolation<T>> violations = validator.validate(object);
+        if (!violations.isEmpty()) {
+            return violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
+}
+
+
+---------------------------------------------------------------------------------
+
+		Paste in util package
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<List<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.toList());
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+}
+
+-----------------------------------------------------------------------------------------------------
+
+			Paste in util package
+			
+			
+			
+@Component
+public class RequestValidator<T> {
+    private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private final Validator validator = validatorFactory.getValidator();
+
+    public Set<String> validate(T object) {
+        Set<ConstraintViolation<T>> violations = validator.validate(object);
+        if (!violations.isEmpty()) {
+            return violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
+}
+
+
+
+
+
