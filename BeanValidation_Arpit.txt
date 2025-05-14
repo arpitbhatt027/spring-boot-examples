@@ -54,9 +54,13 @@ public class GlobalExceptionHandler {
 
 -----------------------------------------------------------------------------------------------------
 
-			Paste in util package
+			Paste in utils package
 			
-			
+import jakarta.validation.*;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.stream.Collectors;			
 			
 @Component
 public class RequestValidator<T> {
